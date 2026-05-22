@@ -1,0 +1,132 @@
+{
+  "strategy": "sentiment-squeeze",
+  "runId": "sentiment-squeeze-1779477033590",
+  "marketId": "polygon-nba-playoffs-nyk-vs-bos-game-7",
+  "startedAt": "2026-05-22T19:10:33.590Z",
+  "status": "COMPLETED",
+  "pipeline": [
+    {
+      "step": "DATA_FETCH",
+      "status": "OK",
+      "message": "Fetched 6 live game events",
+      "startedAt": "2026-05-22T19:10:33.601Z",
+      "completedAt": "2026-05-22T19:10:33.756Z",
+      "durationMs": 155,
+      "metadata": {
+        "eventIds": [
+          "evt-001",
+          "evt-002",
+          "evt-003",
+          "evt-004",
+          "evt-005",
+          "evt-006"
+        ]
+      }
+    },
+    {
+      "step": "ANALYZE",
+      "status": "OK",
+      "message": "Analyzed 6 events",
+      "startedAt": "2026-05-22T19:10:33.757Z",
+      "completedAt": "2026-05-22T19:10:33.758Z",
+      "durationMs": 1,
+      "metadata": {
+        "bullish": 2,
+        "bearish": 3,
+        "neutral": 1
+      }
+    },
+    {
+      "step": "DECIDE",
+      "status": "OK",
+      "message": "Generated 2 trade signals",
+      "startedAt": "2026-05-22T19:10:33.763Z",
+      "completedAt": "2026-05-22T19:10:33.765Z",
+      "durationMs": 2,
+      "metadata": {
+        "generated": 3,
+        "accepted": 2,
+        "confidenceThreshold": 0.72
+      }
+    },
+    {
+      "step": "EXECUTE",
+      "status": "OK",
+      "message": "Prepared 2 dry-run order payloads",
+      "startedAt": "2026-05-22T19:10:33.765Z",
+      "completedAt": "2026-05-22T19:10:33.874Z",
+      "durationMs": 109,
+      "metadata": {
+        "orderCount": 2,
+        "dryRun": true
+      }
+    }
+  ],
+  "signals": [
+    {
+      "signalId": "sentiment-squeeze-NYK-SELL-1779477033764",
+      "marketId": "polygon-nba-playoffs-nyk-vs-bos-game-7",
+      "team": "NYK",
+      "side": "SELL",
+      "size": 10,
+      "confidence": 0.95,
+      "strength": "HIGH",
+      "reason": "NYK printed 3 consecutive bearish momentum events",
+      "sourceEventIds": [
+        "evt-002",
+        "evt-003",
+        "evt-006"
+      ],
+      "createdAt": "2026-05-22T19:10:33.764Z"
+    },
+    {
+      "signalId": "sentiment-squeeze-BOS-BUY-1779477033764",
+      "marketId": "polygon-nba-playoffs-nyk-vs-bos-game-7",
+      "team": "BOS",
+      "side": "BUY",
+      "size": 10,
+      "confidence": 0.95,
+      "strength": "HIGH",
+      "reason": "NYK weakness implies relative edge for BOS; BOS printed 2 consecutive bullish momentum events",
+      "sourceEventIds": [
+        "evt-002",
+        "evt-003",
+        "evt-006",
+        "evt-004",
+        "evt-005"
+      ],
+      "createdAt": "2026-05-22T19:10:33.764Z"
+    }
+  ],
+  "orders": [
+    {
+      "marketId": "polygon-nba-playoffs-nyk-vs-bos-game-7",
+      "outcome": "NYK",
+      "side": "SELL",
+      "size": 10,
+      "orderType": "MARKET",
+      "metadata": {
+        "strategy": "sentiment-squeeze",
+        "signalId": "sentiment-squeeze-NYK-SELL-1779477033764",
+        "confidence": 0.95,
+        "reason": "NYK printed 3 consecutive bearish momentum events",
+        "dryRun": true
+      }
+    },
+    {
+      "marketId": "polygon-nba-playoffs-nyk-vs-bos-game-7",
+      "outcome": "BOS",
+      "side": "BUY",
+      "size": 10,
+      "orderType": "MARKET",
+      "metadata": {
+        "strategy": "sentiment-squeeze",
+        "signalId": "sentiment-squeeze-BOS-BUY-1779477033764",
+        "confidence": 0.95,
+        "reason": "NYK weakness implies relative edge for BOS; BOS printed 2 consecutive bullish momentum events",
+        "dryRun": true
+      }
+    }
+  ],
+  "completedAt": "2026-05-22T19:10:33.874Z"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "sentiment-squeeze-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/strategies/sentiment-squeeze.strategy.js",
+    "check": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {}
+}
