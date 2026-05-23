@@ -1,0 +1,19 @@
+{
+  "name": "sentiment-squeeze-bot",
+  "description": "Canon-aligned NBA prediction market sentiment automation.",
+  "strategy": {
+    "entrypoint": "strategies/canon.ts",
+    "handler": "run",
+    "marketId": "polygon-nba-playoffs-nyk-vs-bos-game-7",
+    "mode": "dry-run"
+  },
+  "execution": {
+    "logsDir": ".canon/execution"
+  },
+  "pipeline": [
+    "DATA_FETCH",
+    "ANALYZE",
+    "DECIDE",
+    "EXECUTE"
+  ]
+}

@@ -16,6 +16,14 @@ The Canon-facing entrypoint is:
 executeStrategy()
 ```
 
+The Canon adapter entrypoint is:
+
+```ts
+strategies/canon.ts
+```
+
+It exports `run`, `handler`, and a default function that call the same strategy loop. The included `canon.config.json` documents the intended Canon-style entrypoint and `.canon/execution` log directory. This keeps the strategy easy to drop into a `canon init` project even though this local machine does not currently have the Canon CLI installed.
+
 The strategy loop is intentionally simple:
 
 1. Data Fetch: load mock live game commentary from `fetchLiveGameFeed()`.
@@ -45,6 +53,26 @@ When the strategy runs, it prints structured JSON logs to the terminal and write
 .canon/execution/
 ```
 
+To run the Canon adapter directly:
+
+```powershell
+npm run build
+npm run canon:start
+```
+
+To run the local live dashboard:
+
+```powershell
+npm run build
+npm run demo
+```
+
+Then open:
+
+```text
+http://localhost:4173
+```
+
 To inspect the latest saved execution log in PowerShell:
 
 ```powershell
@@ -55,6 +83,7 @@ Get-ChildItem .canon\execution | Sort-Object LastWriteTime -Descending | Select-
 
 ```text
 strategies/
+  canon.ts                            Canon-style adapter entrypoint
   sentiment-squeeze.strategy.ts       Canon-facing orchestration entrypoint
   sentiment-squeeze/
     config.ts                         Strategy constants and defaults
@@ -66,6 +95,8 @@ strategies/
     sentiment.ts                      Keyword-weighted sentiment parser
     types.ts                          Shared strategy and Canon log types
     utils.ts                          Timing, math, and error helpers
+demo/
+  live-dashboard.ts                   Local browser dashboard for demo runs
 ```
 
 ## Canon Log Shape
