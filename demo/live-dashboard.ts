@@ -175,7 +175,7 @@ const dashboardHtml = `<!doctype html>
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 12px;
       margin-top: 18px;
     }
@@ -198,6 +198,19 @@ const dashboardHtml = `<!doctype html>
       margin-top: 8px;
       font-size: 24px;
       font-weight: 780;
+    }
+
+    .value.small {
+      font-size: 13px;
+      line-height: 1.35;
+      overflow-wrap: anywhere;
+    }
+
+    .status-line {
+      margin-top: 12px;
+      color: #586052;
+      font-size: 14px;
+      min-height: 20px;
     }
 
     .section {
@@ -277,6 +290,7 @@ const dashboardHtml = `<!doctype html>
       <div>
         <h1>Sentiment Squeeze</h1>
         <p class="subtitle">NBA prediction market automation dashboard</p>
+        <p class="status-line" id="activity">Loaded latest saved execution log.</p>
       </div>
       <button id="runButton" type="button">Run Strategy</button>
     </header>
@@ -298,6 +312,29 @@ const dashboardHtml = `<!doctype html>
         <div class="label">Runtime</div>
         <div class="value" id="runtime">-</div>
       </div>
+      <div class="panel">
+        <div class="label">Run ID</div>
+        <div class="value small" id="runId">-</div>
+      </div>
+      <div class="panel">
+        <div class="label">Completed</div>
+        <div class="value small" id="completedAt">-</div>
+      </div>
+    </section>
+
+    <section class="panel section">
+      <div class="label">Decision Summary</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>Side</th>
+            <th>Confidence</th>
+            <th>Source Events</th>
+          </tr>
+        </thead>
+        <tbody id="signalRows"></tbody>
+      </table>
     </section>
 
     <section class="panel section">
@@ -341,17 +378,25 @@ const dashboardHtml = `<!doctype html>
     const signalsEl = document.getElementById('signals');
     const ordersEl = document.getElementById('orders');
     const runtimeEl = document.getElementById('runtime');
+    const runIdEl = document.getElementById('runId');
+    const completedAtEl = document.getElementById('completedAt');
+    const activityEl = document.getElementById('activity');
     const pipelineEl = document.getElementById('pipeline');
+    const signalRowsEl = document.getElementById('signalRows');
     const orderRowsEl = document.getElementById('orderRows');
     const rawEl = document.getElementById('raw');
 
     runButton.addEventListener('click', async () => {
       runButton.disabled = true;
       runButton.textContent = 'Running...';
+      activityEl.textContent = 'Running strategy loop: data fetch -> analyze -> decide -> execute...';
+      statusEl.textContent = 'RUNNING';
 
       try {
         const response = await fetch('/api/run', { method: 'POST' });
-        render(await response.json());
+        const log = await response.json();
+        render(log);
+        activityEl.textContent = 'Completed new run: ' + log.runId;
       } finally {
         runButton.disabled = false;
         runButton.textContent = 'Run Strategy';
@@ -373,6 +418,8 @@ const dashboardHtml = `<!doctype html>
       signalsEl.textContent = String(log.signals?.length ?? 0);
       ordersEl.textContent = String(log.orders?.length ?? 0);
       runtimeEl.textContent = totalRuntime(log) + 'ms';
+      runIdEl.textContent = log.runId ?? '-';
+      completedAtEl.textContent = formatDateTime(log.completedAt);
       rawEl.textContent = JSON.stringify(log, null, 2);
 
       pipelineEl.innerHTML = (log.pipeline ?? []).map((step) => '<tr>' +
@@ -388,6 +435,13 @@ const dashboardHtml = `<!doctype html>
         '<td>' + escapeHtml(String(order.size)) + '</td>' +
         '<td>' + escapeHtml(order.metadata?.reason ?? '') + '</td>' +
       '</tr>').join('');
+
+      signalRowsEl.innerHTML = (log.signals ?? []).map((signal) => '<tr>' +
+        '<td>' + escapeHtml(signal.team) + '</td>' +
+        '<td><span class="badge ' + signal.side.toLowerCase() + '">' + escapeHtml(signal.side) + '</span></td>' +
+        '<td>' + escapeHtml(String(Math.round((signal.confidence ?? 0) * 100))) + '%</td>' +
+        '<td>' + escapeHtml((signal.sourceEventIds ?? []).join(', ')) + '</td>' +
+      '</tr>').join('');
     }
 
     function totalRuntime(log) {
@@ -401,6 +455,14 @@ const dashboardHtml = `<!doctype html>
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+    }
+
+    function formatDateTime(value) {
+      if (!value) {
+        return '-';
+      }
+
+      return new Date(value).toLocaleString();
     }
 
     loadLatest();
