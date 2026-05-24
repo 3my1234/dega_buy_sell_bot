@@ -60,19 +60,6 @@ npm run build
 npm run canon:start
 ```
 
-To run the local live dashboard:
-
-```powershell
-npm run build
-npm run demo
-```
-
-Then open:
-
-```text
-http://localhost:4173
-```
-
 To inspect the latest saved execution log in PowerShell:
 
 ```powershell
@@ -95,8 +82,6 @@ strategies/
     sentiment.ts                      Keyword-weighted sentiment parser
     types.ts                          Shared strategy and Canon log types
     utils.ts                          Timing, math, and error helpers
-demo/
-  live-dashboard.ts                   Local browser dashboard for demo runs
 ```
 
 ## Canon Log Shape
